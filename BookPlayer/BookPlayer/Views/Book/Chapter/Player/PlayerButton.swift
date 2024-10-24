@@ -28,15 +28,6 @@ struct PlayerButton: View {
             Label(kind.labelText, systemImage: kind.systemName)
                 .labelStyle(.iconOnly)
                 .imageScale(kind.scale)
-                
-//            Label { Text("Previous chapter") }
-//            icon: {
-//                Image(systemName: )
-//                    .resizable()
-//                    .scaledToFit()
-//                    .controlSize(.large)
-//            }
-//            .labelStyle(.iconOnly)
         }
         .frame(width:  44, height: 44)
         .foregroundStyle(.black)

@@ -16,6 +16,20 @@ struct ContentView: View {
             Text("Hello, world!")
         }
         .padding()
+        .onAppear {
+            Task {
+                let books = try? await  BooksDatasourceImp(
+                    dataProvider: BooksDataProviderLocalImp(
+                        sourceFile: "books.json"
+                    )
+                ).getBooks()
+                if let books = books {
+                    print(books)
+                } else {
+                    print("failed")
+                }
+            }
+        }
     }
 }
 

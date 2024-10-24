@@ -20,7 +20,6 @@ struct PlayerControlView: View {
             Spacer(minLength: 10)
             PlayerButton(kind: .next)
         }
-        .padding(.horizontal, 40)
     }
 }
 
