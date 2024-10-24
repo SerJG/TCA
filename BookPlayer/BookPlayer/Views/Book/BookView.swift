@@ -6,40 +6,60 @@
 //
 
 import SwiftUI
+import ComposableArchitecture
 
 struct BookView: View {
-    let book: Book
+    
+    let store: StoreOf<BookReducer>
     
     var body: some View {
-        VStack {
+        WithViewStore(self.store, observe: { $0 }) { viewStore in
+            VStack {
+                HStack {
+                    Text("by \(store.book.author)")
+                        .font(.title3)
+                        .italic()
+                        .frame(alignment: .leading)
+                        .padding(.horizontal)
+                    Spacer()
+                }
+                Spacer()
+                Image(.theSonnetsCover)
+                    .resizable()
+                    .scaledToFit()
+                    .padding(.vertical)
+                switch viewStore.screenState {
+                case .initial:
+                    ProgressView()
+                case .displaying(let chapter):
+                        // TODO: proper pathing
+                        ChapterView(chapter: chapter)
+                            .padding(.top, 8)
+                            .padding(.bottom, 20)
+                case .error:
+                    Text("There is no chapter available for this book.")
+                }
             Spacer()
-            Text(book.title)
-                .font(.title)
-            Text("by \(book.author)")
-                .font(.title3)
-                .italic()
-            Image(.theSonnetsCover)
-                .resizable()
-                .scaledToFit()
-                .padding(.vertical)
-            Text("Chapter 1 of 10".uppercased())
-                .font(.subheadline)
-                .fontWeight(.semibold)
-                .foregroundStyle(.gray)
+            }
 
-
-            ChapterView(chapter: book.chapters.first!)
-                .padding(.top, 8)
-                .padding(.bottom, 20)
-            
-            Spacer()
+        }.onAppear {
+            store.send(.displayPlayer)
         }
+        .navigationTitle(store.book.title)
     }
 }
 
 #Preview {
-    BookView(book: .init(cover: "the-sonnets-cover",
-                         author: "William Shakespeare",
-                         title: "The Sonnets",
-                         chapters: [.init(audio: "", title: "Sonet 1", text: "text")]))
+    
+    BookView(store: .init(initialState: BookReducer.State(book: Book.dummyBook), reducer: { BookReducer() }))
+
+}
+
+fileprivate extension Book {
+    static var dummyBook: Book {
+        .init(cover: "the-sonnets-cover",
+              author: "William Shakespeare",
+              title: "The Sonnets",
+              chapters: [.init(audio: "", title: "Sonet 1", text: "text")])
+    }
 }

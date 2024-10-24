@@ -12,7 +12,9 @@ struct BookPlayerApp: App {
     var body: some Scene {
         
         WindowGroup {
-            ContentView()
+            LibraryView(store: .init(initialState: .init(), reducer: {
+                LibraryReducer()
+            }))
         }
     }
 }

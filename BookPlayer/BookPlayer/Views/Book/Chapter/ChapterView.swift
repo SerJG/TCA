@@ -12,6 +12,10 @@ struct ChapterView: View {
     
     var body: some View {
         VStack {
+            Text("Chapter 1 of 10".uppercased())
+                .font(.subheadline)
+                .fontWeight(.semibold)
+                .foregroundStyle(.gray)
             Text(chapter.title)
                 .font(.body)
                 .multilineTextAlignment(.center)

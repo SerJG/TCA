@@ -7,13 +7,13 @@
 
 import Foundation
 
-struct Book: Decodable {
+struct Book: Decodable, Equatable {
     let cover: String
     let author: String
     let title: String
     let chapters: [Chapter]
     
-    struct Chapter: Decodable  {
+    struct Chapter: Decodable, Equatable  {
         let audio: String
         let title: String
         let text: String

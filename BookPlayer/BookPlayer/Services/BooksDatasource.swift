@@ -7,8 +7,8 @@
 
 import Foundation
 
-enum BooksLoadError: Error {
-    case loadFailed, decodeFailed
+enum BooksLoadError: Error, Equatable {
+    case loadFailed, decodeFailed, unknown
 }
 
 protocol BooksDatasource {
