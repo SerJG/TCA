@@ -3,7 +3,7 @@
     "cover": "the-sonnets-cover",
     "title": "The Sonnets",
     "author": "William Shakespeare",
-    "chapter": [
+    "chapters": [
       {
         "audio": "the-sonnets-001.mp3",
         "title": "Sonnet 1",

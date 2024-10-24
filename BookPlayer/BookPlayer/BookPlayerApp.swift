@@ -10,6 +10,7 @@ import SwiftUI
 @main
 struct BookPlayerApp: App {
     var body: some Scene {
+        
         WindowGroup {
             ContentView()
         }
