@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct PlaybackRateButton: View {
+    
     private var rate: PlaybackRate = .normal
     typealias Action = () -> Void
     private let action: Action?
@@ -18,7 +19,6 @@ struct PlaybackRateButton: View {
     }
     
     var body: some View {
-        
         Text("Rate \(rate.displayValue)")
             .padding(8)
             .font(.subheadline)
@@ -29,7 +29,6 @@ struct PlaybackRateButton: View {
             .onTapGesture {
                 action?()
             }
-
     }
 }
 

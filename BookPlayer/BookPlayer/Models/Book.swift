@@ -7,6 +7,7 @@
 
 import Foundation
 
+// The book model consists of book metadata and chapters content
 struct Book: Decodable, Equatable {
     let cover: String
     let author: String

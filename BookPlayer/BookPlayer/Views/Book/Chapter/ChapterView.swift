@@ -13,8 +13,8 @@ struct ChapterView: View {
     @Bindable var store: StoreOf<ChapterReducer>
     
     var body: some View {
-        
         WithViewStore(self.store, observe: { $0 }) { viewStore in
+            
             switch store.state.screenState {
             case .initial:
                 VStack {

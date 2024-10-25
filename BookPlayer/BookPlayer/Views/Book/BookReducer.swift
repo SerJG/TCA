@@ -10,6 +10,7 @@ import ComposableArchitecture
 
 @Reducer
 struct BookReducer {
+    
     @ObservableState
     struct State: Equatable {
         
@@ -21,32 +22,12 @@ struct BookReducer {
         
         var screenState: ScreenState = .initial
         var book: Book
-        
         var chapterState: ChapterReducer.State!
         
         var currentChapterIndex: Int = 0 {
             didSet {
                 updateChapterState()
             }
-        }
-        
-        fileprivate mutating func updateChapterState() {
-            guard currentChapterIndex < book.chapters.count,
-                  currentChapterIndex >= 0  else { return }
-            
-            chapterState = .init(chapter: book.chapters[currentChapterIndex],
-                                 chapterNumber:  currentChapterIndex+1,
-                                 totalChaptersCount: book.chapters.count)
-        }
-        
-        fileprivate mutating func nextChapter() {
-            guard currentChapterIndex < book.chapters.count-1 else { return }
-            currentChapterIndex += 1
-        }
-        
-        fileprivate mutating func prevChapter() {
-            guard currentChapterIndex > 0 else { return }
-            currentChapterIndex -= 1
         }
     }
     
@@ -75,6 +56,7 @@ struct BookReducer {
 
 // MARK: - Action handlers
 extension BookReducer {
+    
     private func handleChapter(_ state: inout State, action: ChapterReducer.Action) -> Effect<BookReducer.Action> {
         switch action {
             
@@ -105,13 +87,38 @@ extension BookReducer {
 
 // MARK: - Effects helpers
 extension BookReducer  {
+    
     private func displayPlayer(_ state: inout State) -> Effect<BookReducer.Action> {
         guard !state.book.chapters.isEmpty else {
             state.screenState = .error
             return .none
         }
+        
         state.currentChapterIndex = 0
         state.screenState = .displayingChapter
         return .none
+    }
+}
+
+
+extension BookReducer.State {
+    
+    fileprivate mutating func updateChapterState() {
+        guard currentChapterIndex < book.chapters.count,
+              currentChapterIndex >= 0  else { return }
+        
+        chapterState = .init(chapter: book.chapters[currentChapterIndex],
+                             chapterNumber:  currentChapterIndex+1,
+                             totalChaptersCount: book.chapters.count)
+    }
+    
+    fileprivate mutating func nextChapter() {
+        guard currentChapterIndex < book.chapters.count-1 else { return }
+        currentChapterIndex += 1
+    }
+    
+    fileprivate mutating func prevChapter() {
+        guard currentChapterIndex > 0 else { return }
+        currentChapterIndex -= 1
     }
 }

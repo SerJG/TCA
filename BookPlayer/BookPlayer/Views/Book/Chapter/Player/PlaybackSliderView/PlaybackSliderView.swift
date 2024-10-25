@@ -13,8 +13,8 @@ struct PlaybackSliderView: View {
     let store: StoreOf<PlaybackSliderReducer>
     
     var body: some View {
-        
         WithViewStore(self.store, observe: { $0 }) { viewStore in
+            
             HStack {
                 Text(viewStore.state.currentTime.minutesSeconds)
                     .frame(width: 38, alignment: .trailing)

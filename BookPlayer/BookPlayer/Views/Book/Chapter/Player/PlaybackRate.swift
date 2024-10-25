@@ -7,7 +7,6 @@
 
 import Foundation
 
-
 enum PlaybackRate: Float {
     case slow = 0.5
     case normal = 1.0

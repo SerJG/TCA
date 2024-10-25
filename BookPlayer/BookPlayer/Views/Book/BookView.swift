@@ -13,8 +13,8 @@ struct BookView: View {
     let store: StoreOf<BookReducer>
     
     var body: some View {
-        
         WithViewStore(self.store, observe: { $0 }) { viewStore in
+            
             VStack {
                 HStack {
                     Text("by \(store.book.author)")
@@ -25,7 +25,7 @@ struct BookView: View {
                     Spacer()
                 }
                 Spacer()
-                Image(.theSonnetsCover)
+                Image(store.book.cover)
                     .resizable()
                     .scaledToFit()
                     .frame(height: 200)
@@ -54,7 +54,6 @@ struct BookView: View {
 }
 
 #Preview {
-    
     BookView(store: .init(initialState: BookReducer.State(book: Book.dummyBook), reducer: { BookReducer() }))
     
 }

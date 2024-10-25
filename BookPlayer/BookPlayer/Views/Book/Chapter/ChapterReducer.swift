@@ -10,8 +10,8 @@ import ComposableArchitecture
 
 @Reducer
 struct ChapterReducer {
-    @ObservableState
     
+    @ObservableState
     struct State: Equatable {
         
         enum ScreenState: Equatable {
@@ -53,6 +53,7 @@ struct ChapterReducer {
         }
         
         Reduce { state, action in
+            
             switch action {
             case .playerControls(let playerControlsAtion):
                 return handlePlayerControls(&state, playerControlsAtion)
@@ -79,6 +80,7 @@ struct ChapterReducer {
                 
             case .resetPlayer:
                 return invalidatePlayerAndTimers()
+                
             case .shouldShowText(let value):
                 state.shouldShowText = value
                 return .none
@@ -89,6 +91,7 @@ struct ChapterReducer {
 
 // MARK: - Actions handlers
 extension ChapterReducer {
+    
     private func startCurrentTimeTimer() -> Effect<ChapterReducer.Action> {
         return .run { [audioPlayer] send in
             while true {
@@ -101,21 +104,24 @@ extension ChapterReducer {
     
     private func handlePlayerControls(_ state: inout State, _ action: PlayerControlsReducer.Action) -> Effect<ChapterReducer.Action> {
         switch action {
-            
         case .playButtonTapped:
             audioPlayer.play()
             state.playerControls.isPlaying = audioPlayer.isPlaing
             return startCurrentTimeTimer()
+            
         case .pauseButtonTapped:
             audioPlayer.pause()
             state.playerControls.isPlaying = audioPlayer.isPlaing
             return .cancel(id: CancelID.currentTime)
+            
         case .forwardButtonTapped:
             audioPlayer.forward(PlaybackJumpValue.forwardJumpValue)
             return .none
+            
         case .backwardButtonTapped:
             audioPlayer.backward(PlaybackJumpValue.backwardJumpValue)
             return .none
+            
         case .nextButtonTapped, .prevButtonTapped:
             return invalidateTimers()
         }
@@ -151,6 +157,7 @@ extension ChapterReducer {
 
 // MARK: - Effects helpers
 extension ChapterReducer {
+    
     private func invalidatePlayer() -> Effect<ChapterReducer.Action> {
         audioPlayer.invalidate()
         return .none
@@ -160,6 +167,7 @@ extension ChapterReducer {
         .cancel(id: CancelID.currentTime)
         .merge(with: .cancel(id: CancelID.audioPlayer))
     }
+    
     private func invalidatePlayerAndTimers() -> Effect<ChapterReducer.Action> {
         return invalidateTimers().merge(with: invalidatePlayer())
     }
@@ -178,6 +186,7 @@ extension ChapterReducer {
 
 // MARK: - Constants
 extension ChapterReducer {
+    
     enum PlaybackJumpValue {
         static let forwardJumpValue: TimeInterval = 10
         static let backwardJumpValue: TimeInterval = 5
@@ -186,6 +195,5 @@ extension ChapterReducer {
     private enum CancelID {
         static let audioPlayer = "AudioPlayer"
         static let currentTime = "Timer"
-        
     }
 }

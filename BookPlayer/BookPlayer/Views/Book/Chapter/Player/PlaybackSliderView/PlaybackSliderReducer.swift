@@ -10,6 +10,7 @@ import ComposableArchitecture
 
 @Reducer
 struct PlaybackSliderReducer {
+    
     @ObservableState
     struct State: Equatable {
         var currentTime: TimeInterval = 0

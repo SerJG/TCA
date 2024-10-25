@@ -7,6 +7,7 @@
 
 import Foundation
 
+// This is the implementation version of the BooksDataProvider, which fetches books from a JSON file.
 class BooksDataProviderLocalImp: BooksDataProvider {
     
     private let sourceFile: String

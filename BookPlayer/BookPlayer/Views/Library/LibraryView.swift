@@ -14,6 +14,7 @@ struct LibraryView: View {
     
     var body: some View {
         WithViewStore(self.store, observe: { $0 }) { viewStore in
+            
             switch viewStore.state.screenState {
             case .initial, .loading:
                 ProgressView("Loading books")

@@ -10,6 +10,7 @@ import ComposableArchitecture
 
 @Reducer
 struct PlayerControlsReducer {
+    
     @ObservableState
     struct State: Equatable {
         var isPlaying: Bool = false
@@ -22,8 +23,7 @@ struct PlayerControlsReducer {
         case prevButtonTapped
         case forwardButtonTapped
         case backwardButtonTapped
-  }
-    
+    }
     
     var body: some ReducerOf<Self> {
         Reduce { state, action in

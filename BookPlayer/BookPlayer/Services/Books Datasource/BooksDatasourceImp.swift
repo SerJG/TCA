@@ -7,11 +7,9 @@
 
 import Foundation
 
-
 class BooksDatasourceImp: BooksDatasource {
     
     var books: [Book] = []
-    
     let dataProvider: BooksDataProvider
     
     init(dataProvider: BooksDataProvider) {

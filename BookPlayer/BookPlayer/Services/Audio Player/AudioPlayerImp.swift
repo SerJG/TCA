@@ -15,7 +15,6 @@ class AudioPlayerImp: NSObject {
 
 extension AudioPlayerImp: AudioPlayer {
     
-    
     var currentTime: TimeInterval {
         player?.currentTime ?? 0
     }
@@ -31,12 +30,12 @@ extension AudioPlayerImp: AudioPlayer {
     
     func prepareToPlay(_ filename: String) async -> AsyncStream<AudioPlayerEvent> {
         invalidate()
-        
         return AsyncStream { [weak self] continuation in
             guard let self else {
                 continuation.finish()
                 return
             }
+            
             guard let url = Bundle.main.url(forResource: filename, withExtension:nil) else {
                 continuation.yield(.didFailed(.sourceFileMissing))
                 continuation.finish()
