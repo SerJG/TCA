@@ -10,7 +10,7 @@ import ComposableArchitecture
 
 struct ChapterView: View {
     
-    let store: StoreOf<ChapterReducer>
+    @Bindable var store: StoreOf<ChapterReducer>
     
     var body: some View {
         
@@ -46,11 +46,21 @@ struct ChapterView: View {
                     PlaybackRateButton(viewStore.playbackRate) {
                         viewStore.send(.changeRate)
                     }
-                        .padding(.vertical)
+                    .padding(.vertical)
                     
                     PlayerControlsView(store: store.scope(state: \.playerControls, action: \.playerControls))
-                    .padding(.top, 16)
-                    .padding(.horizontal, 60)
+                        .padding(.top, 16)
+                        .padding(.horizontal, 60)
+                    
+                    Button("Show text") {
+                        store.send(.shouldShowText(true))
+                    }
+                }
+                .sheet(isPresented: $store.shouldShowText.sending(\.shouldShowText)) {
+                    ScrollView {
+                        Text(store.chapter.text)
+                            .padding()
+                    }
                 }
             }
         }.onDisappear {
@@ -61,7 +71,7 @@ struct ChapterView: View {
 }
 
 #Preview {
-    ChapterView(store: .init(initialState: ChapterReducer.State.init(chapter: .init(audio: "test.mp3", title: "Some long title for the chapter in the book. Some long title for ", text: "Test"), chapterNumber: 1, totalChaptersCount: 10), reducer: {
+    ChapterView(store: .init(initialState: ChapterReducer.State.init(screenState: .ready, chapter: .init(audio: "test.mp3", title: "Some long title for the chapter in the book. Some long title for ", text: "Test"), chapterNumber: 1, totalChaptersCount: 10), reducer: {
         ChapterReducer()
     }))
 }

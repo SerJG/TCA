@@ -28,22 +28,24 @@ struct BookView: View {
                 Image(.theSonnetsCover)
                     .resizable()
                     .scaledToFit()
-                    .frame(maxWidth: 200)
+                    .frame(height: 200)
                     .padding(.vertical)
+                
+                Spacer()
                 switch store.screenState {
                 case .initial:
                     ProgressView()
                 case .displayingChapter:
                     ChapterView(store: store.scope(state: \.chapterState, action: \.chapter))
                         .frame(maxHeight: 250)
-                            .padding(.top, 8)
-                            .padding(.bottom, 20)
+                        .padding(.top, 8)
+                        .padding(.bottom, 20)
                 case .error:
                     Text("There is no chapter available for this book.")
                 }
-            Spacer()
+                Spacer()
             }
-
+            
         }.onAppear {
             store.send(.displayPlayer)
         }
@@ -54,7 +56,7 @@ struct BookView: View {
 #Preview {
     
     BookView(store: .init(initialState: BookReducer.State(book: Book.dummyBook), reducer: { BookReducer() }))
-
+    
 }
 
 fileprivate extension Book {

@@ -23,6 +23,7 @@ struct ChapterReducer {
         var screenState: ScreenState = .initial
         var chapter: Book.Chapter
         var playbackRate: PlaybackRate = .normal
+        var shouldShowText: Bool = false
         var chapterNumber: Int
         var totalChaptersCount: Int
         
@@ -33,6 +34,7 @@ struct ChapterReducer {
     enum Action {
         case initializePlayer
         case resetPlayer
+        case shouldShowText(Bool)
         case changeRate
         case audioPlayerEvent(AudioPlayerEvent)
         case updateCurrentTime(TimeInterval)
@@ -59,7 +61,7 @@ struct ChapterReducer {
                 state.screenState = .initial
                 let chapterAudioFile = state.chapter.audio
                 return invalidatePlayerAndTimers().merge(with: initilizePlayer(chapterAudioFile))
-                    
+                
             case .changeRate:
                 state.playbackRate.next()
                 audioPlayer.updatePlaybackRate(state.playbackRate.rawValue)
@@ -77,6 +79,9 @@ struct ChapterReducer {
                 
             case .resetPlayer:
                 return invalidatePlayerAndTimers()
+            case .shouldShowText(let value):
+                state.shouldShowText = value
+                return .none
             }
         }
     }
@@ -166,8 +171,8 @@ extension ChapterReducer {
                 await send(.audioPlayerEvent(event))
             }
         }
-            .cancellable(id: CancelID.audioPlayer, cancelInFlight: true)
-            .merge(with: startCurrentTimeTimer())
+        .cancellable(id: CancelID.audioPlayer, cancelInFlight: true)
+        .merge(with: startCurrentTimeTimer())
     }
 }
 
