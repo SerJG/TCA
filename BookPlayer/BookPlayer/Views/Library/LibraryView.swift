@@ -9,6 +9,7 @@ import SwiftUI
 import ComposableArchitecture
 
 struct LibraryView: View {
+    
     let store: StoreOf<LibraryReducer>
     
     var body: some View {

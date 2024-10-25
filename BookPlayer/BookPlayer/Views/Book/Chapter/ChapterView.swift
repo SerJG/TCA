@@ -15,32 +15,46 @@ struct ChapterView: View {
     var body: some View {
         
         WithViewStore(self.store, observe: { $0 }) { viewStore in
-            VStack {
-                Text("Chapter \(viewStore.chapterNumber) of \(viewStore.totalChaptersCount)".uppercased())
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.gray)
-                Text(viewStore.chapter.title)
-                    .font(.body)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 20)
-                    .lineLimit(2)
-                
-                PlaybackBar(totalTime: 300)
-                    .padding(.top, 20)
-                    .padding(.horizontal)
-                
-                PlaybackRateButton(viewStore.playbackRate) {
-                    viewStore.send(.changeRate)
+            switch store.state.screenState {
+            case .initial:
+                VStack {
+                    Spacer()
+                    ProgressView()
+                        .onAppear {
+                            store.send(.initializePlayer)
+                        }
+                    Spacer()
                 }
-                    .padding(.vertical)
-                
-                PlayerControlsView(store: store.scope(state: \.playerControls, action: \.playerControls))
-                .padding(.top, 16)
-                .padding(.horizontal, 60)
+            case .error:
+                Text("Oops.. unfortunately, we can't play this chapter for you. 💔")
+            case .ready:
+                VStack {
+                    Text("Chapter \(viewStore.chapterNumber) of \(viewStore.totalChaptersCount)".uppercased())
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundStyle(.gray)
+                    Text(viewStore.chapter.title)
+                        .font(.body)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 20)
+                        .lineLimit(2)
+                    
+                    PlaybackSliderView(store: store.scope(state: \.playbackSlider, action: \.playbackSlider))
+                        .padding(.top, 20)
+                        .padding(.horizontal)
+                    
+                    PlaybackRateButton(viewStore.playbackRate) {
+                        viewStore.send(.changeRate)
+                    }
+                        .padding(.vertical)
+                    
+                    PlayerControlsView(store: store.scope(state: \.playerControls, action: \.playerControls))
+                    .padding(.top, 16)
+                    .padding(.horizontal, 60)
+                }
             }
-        }.onAppear {
-            store.send(.initializePlayer)
+        }.onDisappear {
+            store.send(.resetPlayer)
         }
         
     }

@@ -28,12 +28,14 @@ struct BookView: View {
                 Image(.theSonnetsCover)
                     .resizable()
                     .scaledToFit()
+                    .frame(maxWidth: 200)
                     .padding(.vertical)
                 switch store.screenState {
                 case .initial:
                     ProgressView()
                 case .displayingChapter:
                     ChapterView(store: store.scope(state: \.chapterState, action: \.chapter))
+                        .frame(maxHeight: 250)
                             .padding(.top, 8)
                             .padding(.bottom, 20)
                 case .error:

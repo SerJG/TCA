@@ -35,8 +35,8 @@ struct BookReducer {
                   currentChapterIndex >= 0  else { return }
             
             chapterState = .init(chapter: book.chapters[currentChapterIndex],
-                                       chapterNumber:  currentChapterIndex+1,
-                                       totalChaptersCount: book.chapters.count)
+                                 chapterNumber:  currentChapterIndex+1,
+                                 totalChaptersCount: book.chapters.count)
         }
         
         fileprivate mutating func nextChapter() {
@@ -61,34 +61,57 @@ struct BookReducer {
         }
         
         Reduce { state, action in
-            
             switch action {
+                
             case .displayPlayer:
-                guard !state.book.chapters.isEmpty else {
-                    state.screenState = .error
-                    return .none
-                }
-                state.currentChapterIndex = 0
-                state.screenState = .displayingChapter
-                return .none
+                return displayPlayer(&state)
                 
             case .chapter(let action):
-                switch action {
-                case .playerControls(let action):
-                    switch action {
-                    case .nextButtonTapped:
-                        state.nextChapter()
-                        return .none
-                    case .prevButtonTapped:
-                        state.prevChapter()
-                        return .none
-                    default:
-                        return .none
-                    }
-                default:
-                    return .none
-                }
+                return handleChapter(&state, action: action)
             }
         }
+    }
+}
+
+// MARK: - Action handlers
+extension BookReducer {
+    private func handleChapter(_ state: inout State, action: ChapterReducer.Action) -> Effect<BookReducer.Action> {
+        switch action {
+            
+        case .playerControls(let action):
+            return handlePlayerControl(&state, action: action)
+            
+        default:
+            return .none
+        }
+    }
+    
+    private func handlePlayerControl(_ state: inout State, action: PlayerControlsReducer.Action) -> Effect<BookReducer.Action> {
+        switch action {
+            
+        case .nextButtonTapped:
+            state.nextChapter()
+            return .none
+            
+        case .prevButtonTapped:
+            state.prevChapter()
+            return .none
+            
+        default:
+            return .none
+        }
+    }
+}
+
+// MARK: - Effects helpers
+extension BookReducer  {
+    private func displayPlayer(_ state: inout State) -> Effect<BookReducer.Action> {
+        guard !state.book.chapters.isEmpty else {
+            state.screenState = .error
+            return .none
+        }
+        state.currentChapterIndex = 0
+        state.screenState = .displayingChapter
+        return .none
     }
 }

@@ -12,7 +12,6 @@ struct PlayerControlsView: View {
     
     let store: StoreOf<PlayerControlsReducer>
     
-    
     var body: some View {
         
         WithViewStore(self.store, observe: { $0 }) { viewStore in
