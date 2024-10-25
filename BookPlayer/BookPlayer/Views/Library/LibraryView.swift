@@ -17,7 +17,7 @@ struct LibraryView: View {
             case .initial, .loading:
                 ProgressView("Loading books")
                 
-            case .finishedLoading(let books):
+            case .finishedLoading(_):
                 NavigationStack {
                     Form {
                         ForEach(store.books) { row in

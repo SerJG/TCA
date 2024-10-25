@@ -19,10 +19,17 @@ struct PlayerButton: View {
     }
 
     let kind: Kind
-
+    typealias Action = () -> Void
+    private let action: Action?
+    
+    init(_ kind: Kind, action: Action? = nil) {
+        self.kind = kind
+        self.action = action
+    }
+    
     var body: some View {
         Button {
-            // TODO: action
+            action?()
         } label: {
             
             Label(kind.labelText, systemImage: kind.systemName)
@@ -83,11 +90,11 @@ extension PlayerButton.Kind {
 
 #Preview {
     Group {
-        PlayerButton(kind: .previous)
-        PlayerButton(kind: .backward)
-        PlayerButton(kind: .play)
-        PlayerButton(kind: .pause)
-        PlayerButton(kind: .forward)
-        PlayerButton(kind: .next)
+        PlayerButton(.previous) {}
+        PlayerButton(.backward) {}
+        PlayerButton(.play) {}
+        PlayerButton(.pause) {}
+        PlayerButton(.forward) {}
+        PlayerButton(.next) {}
     }
 }

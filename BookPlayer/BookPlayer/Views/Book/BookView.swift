@@ -13,6 +13,7 @@ struct BookView: View {
     let store: StoreOf<BookReducer>
     
     var body: some View {
+        
         WithViewStore(self.store, observe: { $0 }) { viewStore in
             VStack {
                 HStack {
@@ -28,12 +29,11 @@ struct BookView: View {
                     .resizable()
                     .scaledToFit()
                     .padding(.vertical)
-                switch viewStore.screenState {
+                switch store.screenState {
                 case .initial:
                     ProgressView()
-                case .displaying(let chapter):
-                        // TODO: proper pathing
-                        ChapterView(chapter: chapter)
+                case .displayingChapter:
+                    ChapterView(store: store.scope(state: \.chapterState, action: \.chapter))
                             .padding(.top, 8)
                             .padding(.bottom, 20)
                 case .error:

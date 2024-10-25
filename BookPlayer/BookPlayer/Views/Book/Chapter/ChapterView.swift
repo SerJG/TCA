@@ -6,43 +6,46 @@
 //
 
 import SwiftUI
+import ComposableArchitecture
 
 struct ChapterView: View {
-    let chapter: Book.Chapter
+    
+    let store: StoreOf<ChapterReducer>
     
     var body: some View {
-        VStack {
-            Text("Chapter 1 of 10".uppercased())
-                .font(.subheadline)
-                .fontWeight(.semibold)
-                .foregroundStyle(.gray)
-            Text(chapter.title)
-                .font(.body)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, 20)
-                .lineLimit(2)
-            
-            PlaybackBar(totalTime: 300)
-                .padding(.top, 20)
-                .padding(.horizontal)
-            
-            PlayerSpeedButton()
-                .padding(.vertical)
-            
-            PlayerControlView()
+        
+        WithViewStore(self.store, observe: { $0 }) { viewStore in
+            VStack {
+                Text("Chapter \(viewStore.chapterNumber) of \(viewStore.totalChaptersCount)".uppercased())
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundStyle(.gray)
+                Text(viewStore.chapter.title)
+                    .font(.body)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 20)
+                    .lineLimit(2)
+                
+                PlaybackBar(totalTime: 300)
+                    .padding(.top, 20)
+                    .padding(.horizontal)
+                
+                PlaybackSpeedButton(viewStore.playbackSpeed) {
+                    viewStore.send(.changeSpeed)
+                }
+                    .padding(.vertical)
+                
+                PlayerControlsView(store: store.scope(state: \.playerControls, action: \.playerControls))
                 .padding(.top, 16)
                 .padding(.horizontal, 60)
+            }
         }
         
     }
 }
 
 #Preview {
-    ChapterView(with: .init(audio: "test.mp3", title: "Some long title for the chapter in the book. Some long title for ", text: "Test"))
-}
-
-extension ChapterView {
-    init (with currentChapter: Book.Chapter) {
-        self.chapter = currentChapter
-    }
+    ChapterView(store: .init(initialState: ChapterReducer.State.init(chapter: .init(audio: "test.mp3", title: "Some long title for the chapter in the book. Some long title for ", text: "Test"), chapterNumber: 1, totalChaptersCount: 10), reducer: {
+        ChapterReducer()
+    }))
 }
