@@ -21,7 +21,7 @@ class BooksDatasourceImp: BooksDatasource {
     func getBooks() async throws -> [Book] {
         guard books.isEmpty else { return books }
         
-        let newsTask = Task { [weak self] () -> [Book] in
+        let task = Task { [weak self] () -> [Book] in
             guard let self else { return [] }
             do {
                 let data = try await dataProvider.loadBooksData()
@@ -34,6 +34,6 @@ class BooksDatasourceImp: BooksDatasource {
                 throw BooksLoadError.decodeFailed
             }
         }
-        return try await newsTask.value
+        return try await task.value
     }
 }

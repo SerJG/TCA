@@ -23,7 +23,7 @@ struct ChapterReducer {
         
         var screenState: ScreenState = .initial
         var chapter: Book.Chapter
-        var playbackSpeed: PlaybackSpeed = .normal
+        var playbackRate: PlaybackRate = .normal
         var chapterNumber: Int
         var totalChaptersCount: Int
         
@@ -33,9 +33,13 @@ struct ChapterReducer {
     
     enum Action {
         case initializePlayer
-        case changeSpeed
+        case changeRate
+        case audioPlayerEvent(AudioPlayerEvent)
+        case updateCurrentTime(TimeInterval)
         case playerControls(PlayerControlsReducer.Action)
     }
+    
+    @Dependency(\.audioPlayer) var audioPlayer
     
     var body: some ReducerOf<Self> {
         Scope(state: \.playerControls, action: \.playerControls) {
@@ -45,11 +49,43 @@ struct ChapterReducer {
         Reduce { state, action in
             switch action {
             case .playerControls(let playerControlsAtion):
-                return handlePlayerControls(playerControlsAtion)
+                return handlePlayerControls(&state, playerControlsAtion)
             case .initializePlayer:
+                let chapterAudioFile = state.chapter.audio
+                return .run { send in
+                    let stream = await audioPlayer.prepareToPlay(chapterAudioFile)
+                                for await event in stream {
+                                    await send(.audioPlayerEvent(event))
+                                }
+                            }
+                            .cancellable(id: "AudioPlayer", cancelInFlight: true)
+                            .merge(with:
+                                // Start a timer to update currentTime
+                                .run { [audioPlayer] send in
+                                    while true {
+                                        try await Task.sleep(nanoseconds: 500_000_000) // 0.5 seconds
+                                        await send(.updateCurrentTime(audioPlayer.currentTime))
+                                    }
+                                }
+                                .cancellable(id: "Timer")
+                            )
+            case .changeRate:
+                state.playbackRate.next()
+                audioPlayer.updatePlaybackRate(state.playbackRate.rawValue)
                 return .none
-            case .changeSpeed:
-                state.playbackSpeed.next()
+            case .audioPlayerEvent(let event):
+                switch event {case .didFinishPlaying(successfully: let successfully):
+                    // TODO: show message
+                    return .none
+                case .didFailed(_):
+                    state.screenState = .error
+                    return .none
+                case .durationUpdated(let time):
+                    // TODO: update duration time
+                    return .none
+                }
+            case .updateCurrentTime(_):
+                // TODO: update time
                 return .none
             }
         }
@@ -57,19 +93,21 @@ struct ChapterReducer {
 }
 
 extension ChapterReducer {
-    private func handlePlayerControls(_ action: PlayerControlsReducer.Action) -> Effect<ChapterReducer.Action> {
+    private func handlePlayerControls(_ state: inout State, _ action: PlayerControlsReducer.Action) -> Effect<ChapterReducer.Action> {
         switch action {
         case .playButtonTapped:
-            // TODO: play
+            audioPlayer.play()
+            state.playerControls.isPlaying = audioPlayer.isPlaing
             return .none
         case .pauseButtonTapped:
-            // TODO: pause
+            audioPlayer.pause()
+            state.playerControls.isPlaying = audioPlayer.isPlaing
             return .none
         case .forwardButtonTapped:
-            // TODO: forward
+            audioPlayer.forward(10)
             return .none
         case .backwardButtonTapped:
-            // TODO: backward
+            audioPlayer.backward(10)
             return .none
         case .nextButtonTapped, .prevButtonTapped:
             // Should be handled by parent - BookReducer

@@ -7,19 +7,19 @@
 
 import SwiftUI
 
-struct PlaybackSpeedButton: View {
-    private var speed: PlaybackSpeed = .normal
+struct PlaybackRateButton: View {
+    private var rate: PlaybackRate = .normal
     typealias Action = () -> Void
     private let action: Action?
     
-    init(_ speed: PlaybackSpeed, action: Action? = nil) {
-        self.speed = speed
+    init(_ rate: PlaybackRate, action: Action? = nil) {
+        self.rate = rate
         self.action = action
     }
     
     var body: some View {
         
-        Text("Speed \(speed.displayValue)")
+        Text("Rate \(rate.displayValue)")
             .padding(8)
             .font(.subheadline)
             .foregroundStyle(.black)
@@ -33,7 +33,7 @@ struct PlaybackSpeedButton: View {
     }
 }
 
-extension PlaybackSpeed {
+extension PlaybackRate {
     var displayValue: String {
         switch self {
         case .slow:
@@ -49,5 +49,5 @@ extension PlaybackSpeed {
 }
 
 #Preview {
-    PlaybackSpeedButton(.normal)
+    PlaybackRateButton(.normal)
 }

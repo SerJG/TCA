@@ -30,8 +30,8 @@ struct ChapterView: View {
                     .padding(.top, 20)
                     .padding(.horizontal)
                 
-                PlaybackSpeedButton(viewStore.playbackSpeed) {
-                    viewStore.send(.changeSpeed)
+                PlaybackRateButton(viewStore.playbackRate) {
+                    viewStore.send(.changeRate)
                 }
                     .padding(.vertical)
                 
@@ -39,6 +39,8 @@ struct ChapterView: View {
                 .padding(.top, 16)
                 .padding(.horizontal, 60)
             }
+        }.onAppear {
+            store.send(.initializePlayer)
         }
         
     }

@@ -20,7 +20,7 @@ class BooksDataProviderLocalImp: BooksDataProvider {
             throw BooksLoadError.loadFailed
         }
         
-        let newsTask = Task { () -> Data in
+        let task = Task { () -> Data in
             do {
                 return try Data(contentsOf: file)
             } catch {
@@ -28,6 +28,6 @@ class BooksDataProviderLocalImp: BooksDataProvider {
             }
         }
         
-        return try await newsTask.value
+        return try await task.value
     }
 }
