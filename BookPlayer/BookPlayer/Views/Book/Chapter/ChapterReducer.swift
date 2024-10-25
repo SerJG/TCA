@@ -111,10 +111,10 @@ extension ChapterReducer {
             state.playerControls.isPlaying = audioPlayer.isPlaing
             return .cancel(id: CancelID.currentTime)
         case .forwardButtonTapped:
-            audioPlayer.forward(10)
+            audioPlayer.forward(PlaybackJumpValue.forwardJumpValue)
             return .none
         case .backwardButtonTapped:
-            audioPlayer.backward(10)
+            audioPlayer.backward(PlaybackJumpValue.backwardJumpValue)
             return .none
         case .nextButtonTapped, .prevButtonTapped:
             return invalidateTimers()
@@ -178,6 +178,11 @@ extension ChapterReducer {
 
 // MARK: - Constants
 extension ChapterReducer {
+    enum PlaybackJumpValue {
+        static let forwardJumpValue: TimeInterval = 10
+        static let backwardJumpValue: TimeInterval = 5
+    }
+    
     private enum CancelID {
         static let audioPlayer = "AudioPlayer"
         static let currentTime = "Timer"

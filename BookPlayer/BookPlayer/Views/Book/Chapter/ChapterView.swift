@@ -52,8 +52,12 @@ struct ChapterView: View {
                         .padding(.top, 16)
                         .padding(.horizontal, 60)
                     
-                    Button("Show text") {
+                    Button {
                         store.send(.shouldShowText(true))
+                    } label: {
+                        Label("Show text", systemImage: "text.page.fill")
+                            .padding()
+                            .foregroundStyle(.gray)
                     }
                 }
                 .sheet(isPresented: $store.shouldShowText.sending(\.shouldShowText)) {
