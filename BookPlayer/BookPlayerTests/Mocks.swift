@@ -26,6 +26,9 @@ class PlayerMockImp: AudioPlayer {
     var isReady: Bool = false
     var isInvalidated: Bool = false
     
+    deinit {
+        continuation?.finish()
+    }
     
     func prepareToPlay(_ filename: String) async -> AsyncStream<BookPlayer.AudioPlayerEvent> {
         return AsyncStream { [weak self] continuation in
