@@ -64,6 +64,8 @@ fileprivate extension Book {
         .init(cover: "the-sonnets-cover",
               author: "William Shakespeare",
               title: "The Sonnets",
-              chapters: [.init(audio: "", title: "Sonet 1", text: "text")])
+              chapters: [.init(audio: "the-sonnets-001.mp3", title: "Sonet 1", text: "text"),
+                         .init(audio: "the-sonnets-002.mp3", title: "Sonet 2", text: "text2"),
+                         .init(audio: "the-sonnets-003.mp3", title: "Sonet 3", text: "Text3")])
     }
 }
