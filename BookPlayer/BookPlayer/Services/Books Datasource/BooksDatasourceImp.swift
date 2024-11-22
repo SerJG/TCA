@@ -7,31 +7,37 @@
 
 import Foundation
 
-class BooksDatasourceImp: BooksDatasource {
+actor BooksDatasourceImp: BooksDatasource {
     
     var books: [Book] = []
     let dataProvider: BooksDataProvider
+    
+    private var loadTask: Task<[Book], any Error>?
     
     init(dataProvider: BooksDataProvider) {
         self.dataProvider = dataProvider
     }
     
     func getBooks() async throws -> [Book] {
-        guard books.isEmpty else { return books }
+        if let loadTask {
+            return try await loadTask.value
+        }
         
-        let task = Task { [weak self] () -> [Book] in
-            guard let self else { return [] }
+        let loadTask = Task { [weak self] in
+            guard let self else { throw BooksLoadError.unknown }
+            let data = try await dataProvider.loadBooksData()
+            let decoder = JSONDecoder()
             do {
-                let data = try await dataProvider.loadBooksData()
-                let decoder = JSONDecoder()
-                self.books = try decoder.decode([Book].self, from: data)
-                return self.books
-            } catch let error as BooksLoadError {
-                throw error
+                return try decoder.decode([Book].self, from: data)
             } catch {
                 throw BooksLoadError.decodeFailed
             }
         }
-        return try await task.value
+        
+        self.loadTask = loadTask
+        books = try await loadTask.value
+        self.loadTask = nil
+        
+        return books
     }
 }

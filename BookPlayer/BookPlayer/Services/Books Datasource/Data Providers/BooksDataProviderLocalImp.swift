@@ -8,7 +8,7 @@
 import Foundation
 
 // This is the implementation version of the BooksDataProvider, which fetches books from a JSON file.
-class BooksDataProviderLocalImp: BooksDataProvider {
+final class BooksDataProviderLocalImp: BooksDataProvider {
     
     private let sourceFile: String
     
@@ -21,14 +21,11 @@ class BooksDataProviderLocalImp: BooksDataProvider {
             throw BooksLoadError.loadFailed
         }
         
-        let task = Task { () -> Data in
-            do {
-                return try Data(contentsOf: file)
-            } catch {
-                throw BooksLoadError.loadFailed
-            }
+        do {
+            return try Data(contentsOf: file)
+        } catch {
+            throw BooksLoadError.loadFailed
         }
-        
-        return try await task.value
     }
 }
+

@@ -19,6 +19,6 @@ protocol BooksDatasource {
 }
 
 // BooksDataProvider that serves as the raw data source 
-protocol BooksDataProvider {
+protocol BooksDataProvider: Sendable {
     func loadBooksData() async throws -> Data
 }
