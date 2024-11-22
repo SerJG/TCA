@@ -13,43 +13,44 @@ struct BookView: View {
     let store: StoreOf<BookReducer>
     
     var body: some View {
-        WithViewStore(self.store, observe: { $0 }) { viewStore in
-            
-            VStack {
-                HStack {
-                    Text("by \(store.book.author)")
-                        .font(.title3)
-                        .italic()
-                        .frame(alignment: .leading)
-                        .padding(.horizontal)
-                    Spacer()
-                }
-                Spacer()
-                Image(store.book.cover)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(height: 200)
-                    .padding(.vertical)
-                
-                Spacer()
-                switch store.screenState {
-                case .initial:
-                    ProgressView()
-                case .displayingChapter:
-                    ChapterView(store: store.scope(state: \.chapterState, action: \.chapter))
-                        .frame(maxHeight: 250)
-                        .padding(.top, 8)
-                        .padding(.bottom, 20)
-                case .error:
-                    Text("There is no chapter available for this book.")
-                }
-                Spacer()
-            }
-            
-        }.onAppear {
+        contentView.onAppear {
             store.send(.displayPlayer)
         }
         .navigationTitle(store.book.title)
+    }
+    
+    @ViewBuilder
+    private var contentView: some View {
+        VStack {
+            HStack {
+                Text("by \(store.book.author)")
+                    .font(.title3)
+                    .italic()
+                    .frame(alignment: .leading)
+                    .padding(.horizontal)
+                Spacer()
+            }
+            Spacer()
+            Image(store.book.cover)
+                .resizable()
+                .scaledToFit()
+                .frame(height: 200)
+                .padding(.vertical)
+            
+            Spacer()
+            switch store.screenState {
+            case .initial:
+                ProgressView()
+            case .displayingChapter:
+                ChapterView(store: store.scope(state: \.chapterState, action: \.chapter))
+                    .frame(maxHeight: 250)
+                    .padding(.top, 8)
+                    .padding(.bottom, 20)
+            case .error:
+                Text("There is no chapter available for this book.")
+            }
+            Spacer()
+        }
     }
 }
 

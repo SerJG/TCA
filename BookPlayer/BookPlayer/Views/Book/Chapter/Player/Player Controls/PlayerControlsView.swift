@@ -13,21 +13,18 @@ struct PlayerControlsView: View {
     let store: StoreOf<PlayerControlsReducer>
     
     var body: some View {
-        WithViewStore(self.store, observe: { $0 }) { viewStore in
-            
-            HStack(alignment: .center) {
-                PlayerButton(.previous) { viewStore.send(.prevButtonTapped) }
-                Spacer(minLength: 10)
-                PlayerButton( .backward) { viewStore.send(.backwardButtonTapped) }
-                Spacer(minLength: 10)
-                PlayerButton(viewStore.isPlaying ? .pause : .play ) {
-                    viewStore.send(viewStore.isPlaying ? .pauseButtonTapped : .playButtonTapped)
-                }
-                Spacer(minLength: 10)
-                PlayerButton(.forward) { viewStore.send(.forwardButtonTapped) }
-                Spacer(minLength: 10)
-                PlayerButton(.next) { viewStore.send(.nextButtonTapped) }
+        HStack(alignment: .center) {
+            PlayerButton(.previous) { store.send(.prevButtonTapped) }
+            Spacer(minLength: 10)
+            PlayerButton( .backward) { store.send(.backwardButtonTapped) }
+            Spacer(minLength: 10)
+            PlayerButton(store.isPlaying ? .pause : .play ) {
+                store.send(store.isPlaying ? .pauseButtonTapped : .playButtonTapped)
             }
+            Spacer(minLength: 10)
+            PlayerButton(.forward) { store.send(.forwardButtonTapped) }
+            Spacer(minLength: 10)
+            PlayerButton(.next) { store.send(.nextButtonTapped) }
         }
     }
 }
